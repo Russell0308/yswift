@@ -1,9 +1,10 @@
+use crate::error::{parse_json, YrsError};
 use std::collections::HashMap;
-use std::ops::{Deref, DerefMut};
 use std::sync::Arc;
 use yrs::types::Attrs;
 use yrs::Any;
 
+/// Text formatting attributes; JSON objects across the FFI.
 pub(crate) struct YrsAttrs(pub(crate) Attrs);
 
 impl From<Attrs> for YrsAttrs {
@@ -12,43 +13,21 @@ impl From<Attrs> for YrsAttrs {
     }
 }
 
-impl From<String> for YrsAttrs {
-    fn from(value: String) -> YrsAttrs {
-        let any = Any::from_json(value.as_str()).unwrap();
-        match any {
-            Any::Map(m) => {
-                let owned = Arc::try_unwrap(m).unwrap(); // unwrap is safe, we just deserialized this value
-                YrsAttrs(owned.into_iter().map(|(k, v)| (Arc::from(k), v)).collect())
-            },
+impl YrsAttrs {
+    /// A JSON object; any other JSON value means no attributes.
+    pub(crate) fn parse(json: &str) -> Result<YrsAttrs, YrsError> {
+        Ok(match parse_json(json)? {
+            Any::Map(map) => YrsAttrs(map.iter().map(|(k, v)| (Arc::from(k.as_str()), v.clone())).collect()),
             _ => YrsAttrs(Attrs::new()),
-        }
+        })
     }
 }
 
 impl From<YrsAttrs> for String {
     fn from(value: YrsAttrs) -> String {
+        let map: HashMap<String, Any> = value.0.iter().map(|(k, v)| (k.to_string(), v.clone())).collect();
         let mut buf = String::new();
-        let attrs_map: HashMap<_,_> = value
-            .0
-            .iter()
-            .map(|(k, v)| (k.to_string(), v.clone()))
-            .collect();
-        let any_map = Any::from(attrs_map);
-        any_map.to_json(&mut buf);
+        Any::from(map).to_json(&mut buf);
         buf
-    }
-}
-
-impl Deref for YrsAttrs {
-    type Target = Attrs;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl DerefMut for YrsAttrs {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
     }
 }

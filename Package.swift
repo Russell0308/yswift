@@ -28,30 +28,27 @@ var globalSwiftSettings: [PackageDescription.SwiftSetting] = []
 #endif
 
 let FFIbinaryTarget: PackageDescription.Target
-// If either the environment variable `YSWIFT_LOCAL` is set to any value, the packages uses
-// a local reference to an XCFramework file (built from `./scripts/build-xcframework.sh`)
-// rather than the previous released version.
+// The Rust core (yrs 0.28 via uniffi 0.32) ships as `yniffiFFI.xcframework`,
+// built by `scripts/build-xcframework.sh` (cross-compiled on a Linux host,
+// assembled on the Mac). If that build output is present next to this manifest
+// (a local checkout, or a consumer using `.package(path:)`), use it. Otherwise
+// fall back to a release asset.
 //
-// The script `./scripts/build-xcframework.sh` _does_ expect that you have Rust
-// installed locally in order to function.
-if ProcessInfo.processInfo.environment["YSWIFT_LOCAL"] != nil {
-    // We are using a local file reference to an XCFramework, which is functional
-    // on the tags for this package because the XCFramework.zip file is committed with
-    // those specific release points. This does, however, cause a few awkward issues,
-    // in particular it means that swift-docc-plugin doesn't operate correctly as the
-    // process to retrieve the symbols from this and the XCFramework fails within
-    // Swift Package Manager. Building documentation within Xcode works perfectly fine,
-    // but if you're attempting to generate HTML documentation, use the script
-    // `./scripts/build-ghpages-docs.sh`.
+// The release URL below is a placeholder: no release of this fork exists yet.
+// The checksum is the one `build-xcframework.sh` prints for the matching zip.
+let packageDir = URL(fileURLWithPath: #filePath).deletingLastPathComponent().path
+let localXCFramework = "lib/yniffiFFI.xcframework"
+if ProcessInfo.processInfo.environment["YSWIFT_LOCAL"] != nil
+    || FileManager.default.fileExists(atPath: "\(packageDir)/\(localXCFramework)") {
     FFIbinaryTarget = .binaryTarget(
             name: "yniffiFFI",
-            path: "./lib/yniffiFFI.xcframework"
+            path: localXCFramework
     )
 } else {
     FFIbinaryTarget = .binaryTarget(
             name: "yniffiFFI",
-            url: "https://github.com/y-crdt/yswift/releases/download/0.2.1/yniffiFFI.xcframework.zip",
-            checksum: "7377378b6d8bb628ff8e2847f73a6b7115705d53a822dd578fb9cbcf2bce1675"
+            url: "https://github.com/Russell0308/yswift/releases/download/0.3.0/yniffiFFI.xcframework.zip",
+            checksum: "e020ff389f37698fefb5e8c960556810df5e2b8cd8a1e19c78e888f281b3fde5"
     )
 }
 

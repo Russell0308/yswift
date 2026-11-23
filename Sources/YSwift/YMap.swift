@@ -47,7 +47,7 @@ public final class YMap<T: Codable>: Transactable, YCollection {
     ///   - transaction: An optional transaction to use when retrieving an object.
     public func updateValue(_ value: T, forKey key: String, transaction: YrsTransaction? = nil) {
         withTransaction(transaction) { txn in
-            self._map.insert(tx: txn, key: key, value: Coder.encoded(value))
+            try! self._map.insert(tx: txn, key: key, value: Coder.encoded(value))
         }
     }
 
@@ -55,7 +55,7 @@ public final class YMap<T: Codable>: Transactable, YCollection {
     /// - Parameter transaction: An optional transaction to use when retrieving an object.
     public func length(transaction: YrsTransaction? = nil) -> UInt32 {
         withTransaction(transaction) { txn in
-            self._map.length(tx: txn)
+            try! self._map.length(tx: txn)
         }
     }
 
@@ -80,7 +80,7 @@ public final class YMap<T: Codable>: Transactable, YCollection {
     ///   - transaction: An optional transaction to use when retrieving an object.
     public func containsKey(_ key: String, transaction: YrsTransaction? = nil) -> Bool {
         withTransaction(transaction) { txn in
-            self._map.containsKey(tx: txn, key: key)
+            try! self._map.containsKey(tx: txn, key: key)
         }
     }
 
@@ -104,7 +104,7 @@ public final class YMap<T: Codable>: Transactable, YCollection {
     /// - Parameter transaction: An optional transaction to use when retrieving an object.
     public func removeAll(transaction: YrsTransaction? = nil) {
         withTransaction(transaction) { txn in
-            self._map.clear(tx: txn)
+            try! self._map.clear(tx: txn)
         }
     }
 
@@ -118,7 +118,7 @@ public final class YMap<T: Codable>: Transactable, YCollection {
         // the UniFFI language bindings into Rust.
         let delegate = YMapKeyIteratorDelegate(callback: body)
         withTransaction(transaction) { txn in
-            self._map.keys(tx: txn, delegate: delegate)
+            try! self._map.keys(tx: txn, delegate: delegate)
         }
     }
 
@@ -133,7 +133,7 @@ public final class YMap<T: Codable>: Transactable, YCollection {
         // is the function that decodes the JSON string into whatever `T` is.
         let delegate = YMapValueIteratorDelegate(callback: body, decoded: Coder.decoded)
         withTransaction(transaction) { txn in
-            self._map.values(tx: txn, delegate: delegate)
+            try! self._map.values(tx: txn, delegate: delegate)
         }
     }
 
@@ -148,7 +148,7 @@ public final class YMap<T: Codable>: Transactable, YCollection {
         // is the function that decodes the value JSON string into whatever `T` is.
         let delegate = YMapKeyValueIteratorDelegate(callback: body, decoded: Coder.decoded)
         withTransaction(transaction) { txn in
-            self._map.each(tx: txn, delegate: delegate)
+            try! self._map.each(tx: txn, delegate: delegate)
         }
     }
 
@@ -167,7 +167,7 @@ public final class YMap<T: Codable>: Transactable, YCollection {
     /// - Returns: An observer identifier.
     public func observe(_ body: @escaping ([YMapChange<T>]) -> Void) -> YSubscription {
         let delegate = YMapObservationDelegate(decoded: Coder.decoded, callback: body)
-        return YSubscription(subscription: _map.observe(delegate: delegate))
+        return YSubscription(subscription: try! _map.observe(delegate: delegate))
     }
 
     public func toMap(transaction: YrsTransaction? = nil) -> [String: T] {
@@ -214,8 +214,8 @@ extension YMap: Sequence {
 
 /// A type that holds a closure that the Rust language bindings calls
 /// while iterating the keys of a Map.
-class YMapKeyIteratorDelegate: YrsMapIteratorDelegate {
-    private var callback: (String) -> Void
+final class YMapKeyIteratorDelegate: YrsMapIteratorDelegate, @unchecked Sendable {
+    private let callback: (String) -> Void
 
     init(callback: @escaping (String) -> Void) {
         self.callback = callback
@@ -231,9 +231,9 @@ class YMapKeyIteratorDelegate: YrsMapIteratorDelegate {
 ///
 /// The values returned by Rust is a String with a JSON encoded object that this
 /// delegate needs to unwrap/decode on the fly...
-class YMapValueIteratorDelegate<T: Codable>: YrsMapIteratorDelegate {
-    private var callback: (T) -> Void
-    private var decoded: (String) -> T
+final class YMapValueIteratorDelegate<T: Codable>: YrsMapIteratorDelegate, @unchecked Sendable {
+    private let callback: (T) -> Void
+    private let decoded: (String) -> T
 
     init(callback: @escaping (T) -> Void,
          decoded: @escaping (String) -> T)
@@ -252,9 +252,9 @@ class YMapValueIteratorDelegate<T: Codable>: YrsMapIteratorDelegate {
 ///
 /// The key is a string, and the value is a String with a JSON encoded object that this
 /// delegate needs to unwrap/decode on the fly.
-class YMapKeyValueIteratorDelegate<T: Codable>: YrsMapKvIteratorDelegate {
-    private var callback: (String, T) -> Void
-    private var decoded: (String) -> T
+final class YMapKeyValueIteratorDelegate<T: Codable>: YrsMapKvIteratorDelegate, @unchecked Sendable {
+    private let callback: (String, T) -> Void
+    private let decoded: (String) -> T
 
     init(callback: @escaping (String, T) -> Void,
          decoded: @escaping (String) -> T)
@@ -268,9 +268,9 @@ class YMapKeyValueIteratorDelegate<T: Codable>: YrsMapKvIteratorDelegate {
     }
 }
 
-class YMapObservationDelegate<T: Codable>: YrsMapObservationDelegate {
-    private var callback: ([YMapChange<T>]) -> Void
-    private var decoded: (String) -> T
+final class YMapObservationDelegate<T: Codable>: YrsMapObservationDelegate, @unchecked Sendable {
+    private let callback: ([YMapChange<T>]) -> Void
+    private let decoded: (String) -> T
 
     init(
         decoded: @escaping (String) -> T,

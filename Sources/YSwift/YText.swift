@@ -20,10 +20,10 @@ public final class YText: Transactable, YCollection {
     ///   - transaction: An optional transaction to use when appending the string.
     public func append(_ text: String, in transaction: YrsTransaction? = nil) {
         if let transaction {
-            self._text.append(tx: transaction, text: text)
+            try! self._text.append(tx: transaction, text: text)
         } else {
             withTransaction(transaction) { txn in
-                self._text.append(tx: txn, text: text)
+                try! self._text.append(tx: txn, text: text)
             }
         }
     }
@@ -39,10 +39,10 @@ public final class YText: Transactable, YCollection {
         in transaction: YrsTransaction? = nil
     ) {
         if let transaction {
-            self._text.insert(tx: transaction, index: index, chunk: text)
+            try! self._text.insert(tx: transaction, index: index, chunk: text)
         } else {
             withTransaction(transaction) { txn in
-                self._text.insert(tx: txn, index: index, chunk: text)
+                try! self._text.insert(tx: txn, index: index, chunk: text)
             }
         }
     }
@@ -60,10 +60,10 @@ public final class YText: Transactable, YCollection {
         in transaction: YrsTransaction? = nil
     ) {
         if let transaction {
-            self._text.insertWithAttributes(tx: transaction, index: index, chunk: text, attrs: Coder.encoded(attributes))
+            try! self._text.insertWithAttributes(tx: transaction, index: index, chunk: text, attrs: Coder.encoded(attributes))
         } else {
             withTransaction(transaction) { txn in
-                self._text.insertWithAttributes(tx: txn, index: index, chunk: text, attrs: Coder.encoded(attributes))
+                try! self._text.insertWithAttributes(tx: txn, index: index, chunk: text, attrs: Coder.encoded(attributes))
             }
         }
     }
@@ -79,10 +79,10 @@ public final class YText: Transactable, YCollection {
         in transaction: YrsTransaction? = nil
     ) {
         if let transaction {
-            self._text.insertEmbed(tx: transaction, index: index, content: Coder.encoded(embed))
+            try! self._text.insertEmbed(tx: transaction, index: index, content: Coder.encoded(embed))
         } else {
             withTransaction(transaction) { txn in
-                self._text.insertEmbed(tx: txn, index: index, content: Coder.encoded(embed))
+                try! self._text.insertEmbed(tx: txn, index: index, content: Coder.encoded(embed))
             }
         }
     }
@@ -100,10 +100,10 @@ public final class YText: Transactable, YCollection {
         in transaction: YrsTransaction? = nil
     ) {
         if let transaction {
-            self._text.insertEmbedWithAttributes(tx: transaction, index: index, content: Coder.encoded(embed), attrs: Coder.encoded(attributes))
+            try! self._text.insertEmbedWithAttributes(tx: transaction, index: index, content: Coder.encoded(embed), attrs: Coder.encoded(attributes))
         } else {
             withTransaction(transaction) { txn in
-                self._text.insertEmbedWithAttributes(tx: txn, index: index, content: Coder.encoded(embed), attrs: Coder.encoded(attributes))
+                try! self._text.insertEmbedWithAttributes(tx: txn, index: index, content: Coder.encoded(embed), attrs: Coder.encoded(attributes))
             }
         }
     }
@@ -121,10 +121,10 @@ public final class YText: Transactable, YCollection {
         in transaction: YrsTransaction? = nil
     ) {
         if let transaction {
-            self._text.format(tx: transaction, index: index, length: length, attrs: Coder.encoded(attributes))
+            try! self._text.format(tx: transaction, index: index, length: length, attrs: Coder.encoded(attributes))
         } else {
             withTransaction(transaction) { txn in
-                self._text.format(tx: txn, index: index, length: length, attrs: Coder.encoded(attributes))
+                try! self._text.format(tx: txn, index: index, length: length, attrs: Coder.encoded(attributes))
             }
         }
     }
@@ -140,10 +140,10 @@ public final class YText: Transactable, YCollection {
         in transaction: YrsTransaction? = nil
     ) {
         if let transaction {
-            self._text.removeRange(tx: transaction, start: start, length: length)
+            try! self._text.removeRange(tx: transaction, start: start, length: length)
         } else {
             withTransaction(transaction) { txn in
-                self._text.removeRange(tx: txn, start: start, length: length)
+                try! self._text.removeRange(tx: txn, start: start, length: length)
             }
         }
     }
@@ -152,10 +152,10 @@ public final class YText: Transactable, YCollection {
     /// - Parameter transaction: An optional transaction to use when appending the string.
     public func getString(in transaction: YrsTransaction? = nil) -> String {
         if let transaction {
-            self._text.getString(tx: transaction)
+            try! self._text.getString(tx: transaction)
         } else {
             withTransaction(transaction) { txn in
-                self._text.getString(tx: txn)
+                try! self._text.getString(tx: txn)
             }
         }
     }
@@ -164,10 +164,10 @@ public final class YText: Transactable, YCollection {
     /// - Parameter transaction: An optional transaction to use when appending the string.
     public func length(in transaction: YrsTransaction? = nil) -> UInt32 {
         if let transaction {
-            self._text.length(tx: transaction)
+            try! self._text.length(tx: transaction)
         } else {
             withTransaction(transaction) { txn in
-                self._text.length(tx: txn)
+                try! self._text.length(tx: txn)
             }
         }
     }
@@ -187,7 +187,7 @@ public final class YText: Transactable, YCollection {
     /// - Returns: An observer identifier that you can use to stop observing the text.
     public func observe(_ callback: @escaping ([YTextChange]) -> Void) -> YSubscription {
         YSubscription(
-            subscription: _text.observe(
+            subscription: try! _text.observe(
                 delegate: YTextObservationDelegate(
                     callback: callback,
                     decoded: Coder.decoded(_:)
@@ -225,9 +225,9 @@ extension YText: CustomStringConvertible {
     }
 }
 
-class YTextObservationDelegate: YrsTextObservationDelegate {
-    private var callback: ([YTextChange]) -> Void
-    private var decoded: (String) -> [String: Any]
+final class YTextObservationDelegate: YrsTextObservationDelegate, @unchecked Sendable {
+    private let callback: ([YTextChange]) -> Void
+    private let decoded: (String) -> [String: Any]
 
     init(
         callback: @escaping ([YTextChange]) -> Void,

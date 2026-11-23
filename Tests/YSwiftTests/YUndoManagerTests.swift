@@ -11,10 +11,10 @@ class TestMetadata {
 
 func exchangeUpdates(_ document1: YDocument, _ document2: YDocument) {
     let clock1 = document1.transactSync { txn in
-        txn.transactionStateVector()
+        try! txn.transactionStateVector()
     }
     let clock2 = document2.transactSync { txn in
-        txn.transactionStateVector()
+        try! txn.transactionStateVector()
     }
     let update1 = document1.transactSync { txn in
         document1.diff(txn: txn, from: clock2)

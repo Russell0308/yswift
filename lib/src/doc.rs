@@ -1,77 +1,107 @@
 use crate::array::YrsArray;
-use crate::error::CodingError;
+use crate::error::{guard, YrsError};
 use crate::map::YrsMap;
+use crate::subscription::{next_key, SendBox, YSubscription};
 use crate::text::YrsText;
 use crate::transaction::YrsTransaction;
-use std::sync::Arc;
-use std::{borrow::Borrow, cell::RefCell};
-use yrs::{updates::decoder::Decode, ArrayRef, Doc, OffsetKind, Options, StateVector, Transact, Origin};
-use yrs::{MapRef, ReadTxn};
-use yrs::branch::Branch;
 use crate::undo::YrsUndoManager;
-use crate::UniffiCustomTypeConverter;
+use std::fmt::Debug;
+use std::sync::Arc;
+use yrs::branch::Branch;
+use yrs::{
+    updates::decoder::Decode, Doc, OffsetKind, Options, Origin, StateVector, Transact,
+    TransactionMut, WriteTxn, ReadTxn,
+};
 
-pub(crate) struct YrsDoc(RefCell<Doc>);
+pub(crate) struct YrsDoc(Doc);
 
 unsafe impl Send for YrsDoc {}
 unsafe impl Sync for YrsDoc {}
+
+/// Receives every committed update (v1) of the document, with the
+/// transaction's origin. Runs during commit: don't open a transaction on the
+/// same document from inside it.
+pub(crate) trait YrsDocUpdateDelegate: Send + Sync + Debug {
+    fn call(&self, update: Vec<u8>, origin: Option<YrsOrigin>);
+}
 
 impl YrsDoc {
     pub(crate) fn new() -> Self {
         let mut options = Options::default();
         options.offset_kind = OffsetKind::Utf16;
-        let doc = yrs::Doc::with_options(options);
+        Self(Doc::with_options(options))
+    }
 
-        Self(RefCell::from(doc))
+    /// An exclusive transaction for a one-off call, or `TransactionBusy`
+    /// (yrs 0.28 would block forever instead).
+    fn exclusive(&self) -> Result<TransactionMut<'_>, YrsError> {
+        self.0.try_transact_mut().map_err(|_| YrsError::TransactionBusy)
     }
 
     pub(crate) fn encode_diff_v1(
         &self,
         transaction: &YrsTransaction,
         state_vector: Vec<u8>,
-    ) -> Result<Vec<u8>, CodingError> {
-        let mut tx = transaction.transaction();
-        let tx = tx.as_mut().unwrap();
-
-        StateVector::decode_v1(state_vector.borrow())
-            .map_err(|_e| CodingError::DecodingError)
-            .map(|sv| tx.encode_diff_v1(&sv))
+    ) -> Result<Vec<u8>, YrsError> {
+        transaction.with(|txn| {
+            let sv = StateVector::decode_v1(&state_vector).map_err(|_| YrsError::DecodingError)?;
+            Ok(txn.encode_diff_v1(&sv))
+        })
     }
 
-    pub(crate) fn get_text(&self, name: String) -> Arc<YrsText> {
-        let text_ref = self.0.borrow().get_or_insert_text(name.as_str());
-        Arc::from(YrsText::from(text_ref))
+    pub(crate) fn get_text(&self, name: String) -> Result<Arc<YrsText>, YrsError> {
+        guard(|| Ok(Arc::new(YrsText::from(self.exclusive()?.get_or_insert_text(name.as_str())))))
     }
 
-    pub(crate) fn get_array(&self, name: String) -> Arc<YrsArray> {
-        let array_ref: ArrayRef = self.0.borrow().get_or_insert_array(name.as_str()).into();
-        Arc::from(YrsArray::from(array_ref))
+    pub(crate) fn get_array(&self, name: String) -> Result<Arc<YrsArray>, YrsError> {
+        guard(|| Ok(Arc::new(YrsArray::from(self.exclusive()?.get_or_insert_array(name.as_str())))))
     }
 
-    pub(crate) fn get_map(&self, name: String) -> Arc<YrsMap> {
-        let map_ref: MapRef = self.0.borrow().get_or_insert_map(name.as_str()).into();
-        Arc::from(YrsMap::from(map_ref))
+    pub(crate) fn get_map(&self, name: String) -> Result<Arc<YrsMap>, YrsError> {
+        guard(|| Ok(Arc::new(YrsMap::from(self.exclusive()?.get_or_insert_map(name.as_str())))))
     }
 
-    pub(crate) fn transact<'doc>(&self, origin: Option<YrsOrigin>) -> Arc<YrsTransaction> {
-        let tx = self.0.borrow();
-        let tx = if let Some(origin) = origin {
-            tx.transact_mut_with(origin)
-        } else {
-            tx.transact_mut()
-        };
-        Arc::from(YrsTransaction::from(tx))
+    pub(crate) fn transact(&self, origin: Option<YrsOrigin>) -> Result<Arc<YrsTransaction>, YrsError> {
+        guard(|| {
+            let txn = match origin {
+                Some(origin) => self.0.try_transact_mut_with(origin),
+                None => self.0.try_transact_mut(),
+            }
+            .map_err(|_| YrsError::TransactionBusy)?;
+            Ok(Arc::new(YrsTransaction::from(txn)))
+        })
     }
 
-    pub(crate) fn undo_manager(&self, tracked_refs: Vec<YrsCollectionPtr>) -> Arc<YrsUndoManager> {
-        let doc = &*self.0.borrow();
-        let mut i = tracked_refs.into_iter();
-        let first = i.next().unwrap();
-        let mut undo_manager = yrs::undo::UndoManager::new(doc, &first);
-        while let Some(n) = i.next() {
-            undo_manager.expand_scope(&n);
-        }
-        Arc::new(YrsUndoManager::from(undo_manager))
+    pub(crate) fn undo_manager(
+        &self,
+        tracked_refs: Vec<YrsCollectionPtr>,
+    ) -> Result<Arc<YrsUndoManager>, YrsError> {
+        guard(|| {
+            let mut manager = yrs::undo::UndoManager::with_options(Default::default());
+            for tracked in tracked_refs {
+                manager.expand_scope(&self.0, &tracked);
+            }
+            Ok(Arc::new(YrsUndoManager::new(self.0.clone(), manager)))
+        })
+    }
+
+    /// Calls `delegate` with each committed update (local or applied remote).
+    pub(crate) fn observe_update_v1(
+        &self,
+        delegate: Box<dyn YrsDocUpdateDelegate>,
+    ) -> Result<Arc<YSubscription>, YrsError> {
+        guard(|| {
+            let key = next_key();
+            self.0
+                .observe_update_v1(key.clone(), move |txn, event| {
+                    delegate.call(event.update.clone(), txn.origin().cloned().map(YrsOrigin::from))
+                })
+                .map_err(|_| YrsError::TransactionBusy)?;
+            let doc = SendBox(self.0.clone());
+            Ok(Arc::new(YSubscription::new(move || {
+                let _ = doc.0.unobserve_update_v1(key);
+            })))
+        })
     }
 }
 
@@ -84,30 +114,24 @@ impl From<Origin> for YrsOrigin {
     }
 }
 
-impl Into<Origin> for YrsOrigin {
-    fn into(self) -> Origin {
-        Origin::from(self.0.as_ref())
+impl From<YrsOrigin> for Origin {
+    fn from(value: YrsOrigin) -> Origin {
+        Origin::from(value.0.as_ref())
     }
 }
 
-impl UniffiCustomTypeConverter for YrsOrigin {
-    type Builtin = Vec<u8>;
+uniffi::custom_type!(YrsOrigin, Vec<u8>, {
+    lower: |origin| origin.0.to_vec(),
+    try_lift: |bytes| Ok(YrsOrigin(bytes.into())),
+});
 
-    fn into_custom(val: Self::Builtin) -> uniffi::Result<Self> where Self: Sized {
-        Ok(YrsOrigin(val.into()))
-    }
-
-    fn from_custom(obj: Self) -> Self::Builtin {
-        obj.0.to_vec()
-    }
-}
-
+/// A shared type's branch address, used to scope undo managers.
 #[derive(Copy, Clone)]
 #[repr(transparent)]
 pub(crate) struct YrsCollectionPtr(*const Branch);
 
-unsafe impl Send for YrsCollectionPtr { }
-unsafe impl Sync for YrsCollectionPtr { }
+unsafe impl Send for YrsCollectionPtr {}
+unsafe impl Sync for YrsCollectionPtr {}
 
 impl AsRef<Branch> for YrsCollectionPtr {
     #[inline]
@@ -119,20 +143,11 @@ impl AsRef<Branch> for YrsCollectionPtr {
 impl<'a> From<&'a Branch> for YrsCollectionPtr {
     #[inline]
     fn from(value: &'a Branch) -> Self {
-        let ptr = value as *const Branch;
-        YrsCollectionPtr(ptr)
+        YrsCollectionPtr(value as *const Branch)
     }
 }
 
-impl UniffiCustomTypeConverter for YrsCollectionPtr {
-    type Builtin = u64;
-
-    fn into_custom(val: Self::Builtin) -> uniffi::Result<Self> where Self: Sized {
-        let ptr = val as usize as *const Branch;
-        Ok(YrsCollectionPtr(ptr))
-    }
-
-    fn from_custom(obj: Self) -> Self::Builtin {
-        obj.0 as usize as u64
-    }
-}
+uniffi::custom_type!(YrsCollectionPtr, u64, {
+    lower: |ptr| ptr.0 as usize as u64,
+    try_lift: |raw| Ok(YrsCollectionPtr(raw as usize as *const Branch)),
+});

@@ -1,5 +1,6 @@
 use crate::attrs::YrsAttrs;
-use yrs::types::{Delta, Value};
+use crate::error::out_to_json;
+use yrs::types::Delta;
 
 pub enum YrsDelta {
     Inserted { value: String, attrs: String },
@@ -7,38 +8,14 @@ pub enum YrsDelta {
     Retained { index: u32, attrs: String },
 }
 
-// Watch out for XML types here, because underlying
-// value from Delta::Inserted event could be XMLText instances as well
-// and things might break due to that
-
+// Inserted values that are shared types (e.g. embedded XML) are passed as "".
 impl From<&Delta> for YrsDelta {
     fn from(item: &Delta) -> Self {
+        let attrs = |a: &Option<Box<yrs::types::Attrs>>| String::from(YrsAttrs::from(a.as_deref().cloned().unwrap_or_default()));
         match item {
-            Delta::Inserted(value, attrs) => {
-                let mut buf = String::new();
-                if let Value::Any(any) = value {
-                    any.to_json(&mut buf);
-                    let attrs = YrsAttrs::from(*attrs.clone().unwrap_or_default());
-                    YrsDelta::Inserted {
-                        value: (buf),
-                        attrs: (attrs.into()),
-                    }
-                } else {
-                    // @TODO: fix silly handling, it will just call with empty string if casting fails
-                    YrsDelta::Inserted {
-                        value: ("".into()),
-                        attrs: ("".into()),
-                    }
-                }
-            }
-            Delta::Retain(index, attrs) => {
-                let attrs = YrsAttrs::from(*attrs.clone().unwrap_or_default());
-                YrsDelta::Retained {
-                    index: (*index),
-                    attrs: (attrs.into()),
-                }
-            }
-            Delta::Deleted(index) => YrsDelta::Deleted { index: (*index) },
+            Delta::Inserted(value, a) => YrsDelta::Inserted { value: out_to_json(value).unwrap_or_default(), attrs: attrs(a) },
+            Delta::Retain(index, a) => YrsDelta::Retained { index: *index, attrs: attrs(a) },
+            Delta::Deleted(index) => YrsDelta::Deleted { index: *index },
         }
     }
 }

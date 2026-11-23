@@ -1,131 +1,145 @@
+use crate::doc::{YrsCollectionPtr, YrsOrigin};
+use crate::error::{guard, YrsError};
+use crate::subscription::{next_key, SendBox, YSubscription};
 use std::fmt::Debug;
 use std::sync::{Arc, Mutex, MutexGuard};
-use yrs::undo::EventKind;
-use crate::doc::{YrsCollectionPtr, YrsOrigin};
-use crate::subscription::YSubscription;
+use yrs::undo::{EventKind, UndoManager};
+use yrs::{Doc, Transact};
 
-pub(crate) struct YrsUndoManager(Mutex<yrs::undo::UndoManager<u64>>);
+type Manager = UndoManager<u64>;
+
+/// Tracks changes to a set of shared types; `undo`/`redo` revert or re-apply
+/// them. Fails with `TransactionBusy` while a transaction is open on the doc
+/// (yrs 0.28 would block forever instead).
+pub(crate) struct YrsUndoManager {
+    doc: Doc,
+    manager: Arc<Mutex<Manager>>,
+}
 
 unsafe impl Send for YrsUndoManager {}
 unsafe impl Sync for YrsUndoManager {}
 
-impl From<yrs::undo::UndoManager<u64>> for YrsUndoManager {
-    fn from(value: yrs::undo::UndoManager<u64>) -> Self {
-        YrsUndoManager(Mutex::new(value))
-    }
-}
-
 impl YrsUndoManager {
-
-    #[inline]
-    fn acquire_lock(&self) -> MutexGuard<yrs::undo::UndoManager<u64>> {
-        // unwrap should be safe, as the only occasion to cause error would be a panic
-        // while holding a lock and all operations holding a lock here only do so for
-        // a time needed to perform a non-panicing operation
-        self.0.lock().unwrap()
+    pub(crate) fn new(doc: Doc, manager: Manager) -> Self {
+        YrsUndoManager { doc, manager: Arc::new(Mutex::new(manager)) }
     }
 
-    pub(crate) fn add_origin(&self, origin: YrsOrigin) {
-        let mut m = self.acquire_lock();
-        m.include_origin(origin)
+    fn lock(&self) -> MutexGuard<'_, Manager> {
+        self.manager.lock().unwrap_or_else(|poisoned| poisoned.into_inner())
     }
 
-    pub(crate) fn remove_origin(&self, origin: YrsOrigin) {
-        let mut m = self.acquire_lock();
-        m.exclude_origin(origin);
+    /// Fails fast instead of deadlocking if a transaction is open.
+    fn ensure_idle(&self) -> Result<(), YrsError> {
+        self.doc.try_transact_mut().map(drop).map_err(|_| YrsError::TransactionBusy)
     }
 
-    pub(crate) fn add_scope(&self, tracked_ref: YrsCollectionPtr) {
-        let mut m = self.acquire_lock();
-        m.expand_scope(&tracked_ref);
+    pub(crate) fn add_origin(&self, origin: YrsOrigin) -> Result<(), YrsError> {
+        guard(|| Ok(self.lock().include_origin(origin)))
     }
 
-    pub(crate) fn undo(&self) -> Result<bool, YrsUndoError> {
-        let mut m = self.acquire_lock();
-        m.undo().map_err(|_| YrsUndoError::PendingTransaction)
+    pub(crate) fn remove_origin(&self, origin: YrsOrigin) -> Result<(), YrsError> {
+        guard(|| Ok(self.lock().exclude_origin(origin)))
     }
 
-    pub(crate) fn redo(&self) -> Result<bool, YrsUndoError> {
-        let mut m = self.acquire_lock();
-        m.redo().map_err(|_| YrsUndoError::PendingTransaction)
+    pub(crate) fn add_scope(&self, tracked_ref: YrsCollectionPtr) -> Result<(), YrsError> {
+        guard(|| Ok(self.lock().expand_scope(&self.doc, &tracked_ref)))
     }
 
-    pub(crate) fn clear(&self) -> Result<(), YrsUndoError> {
-        let mut m = self.acquire_lock();
-        m.clear().map_err(|_| YrsUndoError::PendingTransaction)
+    pub(crate) fn undo(&self) -> Result<bool, YrsError> {
+        guard(|| {
+            self.ensure_idle()?;
+            Ok(self.lock().undo_blocking())
+        })
     }
 
-    pub(crate) fn wrap_changes(&self) {
-        let mut m = self.acquire_lock();
-        m.reset();
+    pub(crate) fn redo(&self) -> Result<bool, YrsError> {
+        guard(|| {
+            self.ensure_idle()?;
+            Ok(self.lock().redo_blocking())
+        })
     }
 
-    pub(crate) fn observe_added(&self, delegate: Box<dyn YrsUndoManagerObservationDelegate>) -> Arc<YSubscription> {
-        let m = self.acquire_lock();
-        let subscription = m.observe_item_added(move |_, e| {
-            *e.meta_mut() = delegate.call(YrsUndoEvent::new(e), *e.meta_mut());
-        });
-        Arc::new(YSubscription::new(subscription))
+    pub(crate) fn clear(&self) -> Result<(), YrsError> {
+        guard(|| Ok(self.lock().clear_all()))
     }
 
-    pub(crate) fn observe_updated(&self, delegate: Box<dyn YrsUndoManagerObservationDelegate>) -> Arc<YSubscription> {
-        let m = self.acquire_lock();
-        let subscription = m.observe_item_updated(move |_, e| {
-            *e.meta_mut() = delegate.call(YrsUndoEvent::new(e), *e.meta_mut());
-        });
-        Arc::new(YSubscription::new(subscription))
+    pub(crate) fn wrap_changes(&self) -> Result<(), YrsError> {
+        guard(|| Ok(self.lock().reset()))
     }
 
-    pub(crate) fn observe_popped(&self, delegate: Box<dyn YrsUndoManagerObservationDelegate>) -> Arc<YSubscription> {
-        let m = self.acquire_lock();
-        let subscription = m.observe_item_popped(move |_, e| {
-            *e.meta_mut() = delegate.call(YrsUndoEvent::new(e), *e.meta_mut());
-        });
-        Arc::new(YSubscription::new(subscription))
+    pub(crate) fn observe_added(&self, delegate: Box<dyn YrsUndoManagerObservationDelegate>) -> Result<Arc<YSubscription>, YrsError> {
+        self.subscribe(delegate, |m, key, f| m.observe_item_added(key, f), |m, key| { m.unobserve_item_added(key); })
     }
-}
 
-#[derive(Debug, thiserror::Error)]
-pub(crate) enum YrsUndoError {
-    #[error("Operations failed - there's already an active transaction on a current document")]
-    PendingTransaction
+    pub(crate) fn observe_updated(&self, delegate: Box<dyn YrsUndoManagerObservationDelegate>) -> Result<Arc<YSubscription>, YrsError> {
+        self.subscribe(delegate, |m, key, f| m.observe_item_updated(key, f), |m, key| { m.unobserve_item_updated(key); })
+    }
+
+    pub(crate) fn observe_popped(&self, delegate: Box<dyn YrsUndoManagerObservationDelegate>) -> Result<Arc<YSubscription>, YrsError> {
+        self.subscribe(delegate, |m, key, f| m.observe_item_popped(key, f), |m, key| { m.unobserve_item_popped(key); })
+    }
+
+    fn subscribe(
+        &self,
+        delegate: Box<dyn YrsUndoManagerObservationDelegate>,
+        observe: impl FnOnce(&mut Manager, yrs::Origin, Box<dyn FnMut(&yrs::TransactionMut, &mut yrs::undo::Event<u64>) + Send + Sync>),
+        unobserve: impl FnOnce(&mut Manager, yrs::Origin) + Send + 'static,
+    ) -> Result<Arc<YSubscription>, YrsError> {
+        guard(|| {
+            let key = next_key();
+            observe(&mut self.lock(), key.clone(), Box::new(move |_, e| {
+                let meta = *e.meta();
+                *e.meta_mut() = delegate.call(YrsUndoEvent::new(e), meta);
+            }));
+            let manager = SendBox(self.manager.clone());
+            Ok(Arc::new(YSubscription::new(move || {
+                let manager = manager; // capture the whole SendBox, not just its field
+                let mut m = manager.0.lock().unwrap_or_else(|p| p.into_inner());
+                unobserve(&mut m, key);
+            })))
+        })
+    }
 }
 
 pub(crate) trait YrsUndoManagerObservationDelegate: Send + Sync + Debug {
     fn call(&self, e: Arc<YrsUndoEvent>, ptr: u64) -> u64;
 }
 
+/// Snapshot of an undo event, valid after the callback returns.
 pub(crate) struct YrsUndoEvent {
-    inner: &'static mut yrs::undo::Event<u64>,
+    origin: Option<YrsOrigin>,
+    kind: EventKind,
+    changed: Vec<usize>,
 }
 
-unsafe impl Send for YrsUndoEvent {}
-unsafe impl Sync for YrsUndoEvent {}
-
 impl YrsUndoEvent {
-    fn new(inner: &mut yrs::undo::Event<u64>) -> Arc<Self> {
-        let inner = unsafe { std::mem::transmute(inner) };
+    fn new(event: &yrs::undo::Event<u64>) -> Arc<Self> {
         Arc::new(YrsUndoEvent {
-            inner
+            origin: event.origin().cloned().map(YrsOrigin::from),
+            kind: event.kind(),
+            changed: event.changed_parent_types().iter().map(|b| AsRef::<yrs::branch::Branch>::as_ref(b) as *const _ as usize).collect(),
         })
     }
 
     pub(crate) fn origin(&self) -> Option<YrsOrigin> {
-        self.inner.origin().cloned().map(YrsOrigin::from)
+        self.origin.clone()
     }
+
     pub(crate) fn kind(&self) -> YrsUndoEventKind {
-        match self.inner.kind() {
+        match self.kind {
             EventKind::Undo => YrsUndoEventKind::Undo,
             EventKind::Redo => YrsUndoEventKind::Redo,
         }
     }
+
     pub(crate) fn has_changed(&self, shared_ref: YrsCollectionPtr) -> bool {
-        self.inner.has_changed(&shared_ref)
+        let ptr = AsRef::<yrs::branch::Branch>::as_ref(&shared_ref) as *const _ as usize;
+        self.changed.contains(&ptr)
     }
 }
 
 #[repr(u8)]
 pub(crate) enum YrsUndoEventKind {
     Undo,
-    Redo
+    Redo,
 }

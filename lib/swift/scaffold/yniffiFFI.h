@@ -50,9 +50,9 @@ typedef void (*UniffiRustFutureContinuationCallback)(uint64_t, int8_t
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_FREE
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_FREE
-typedef void (*UniffiForeignFutureFree)(uint64_t
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_DROPPED_CALLBACK
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_DROPPED_CALLBACK
+typedef void (*UniffiForeignFutureDroppedCallback)(uint64_t
     );
 
 #endif
@@ -62,192 +62,184 @@ typedef void (*UniffiCallbackInterfaceFree)(uint64_t
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE
-typedef struct UniffiForeignFuture {
-    uint64_t handle;
-    UniffiForeignFutureFree _Nonnull free;
-} UniffiForeignFuture;
+#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_CLONE
+#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_CLONE
+typedef uint64_t (*UniffiCallbackInterfaceClone)(uint64_t
+    );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U8
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U8
-typedef struct UniffiForeignFutureStructU8 {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_DROPPED_CALLBACK_STRUCT
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_DROPPED_CALLBACK_STRUCT
+typedef struct UniffiForeignFutureDroppedCallbackStruct {
+    uint64_t handle;
+    UniffiForeignFutureDroppedCallback _Nonnull free;
+} UniffiForeignFutureDroppedCallbackStruct;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U8
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U8
+typedef struct UniffiForeignFutureResultU8 {
     uint8_t returnValue;
     RustCallStatus callStatus;
-} UniffiForeignFutureStructU8;
+} UniffiForeignFutureResultU8;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U8
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U8
-typedef void (*UniffiForeignFutureCompleteU8)(uint64_t, UniffiForeignFutureStructU8
+typedef void (*UniffiForeignFutureCompleteU8)(uint64_t, UniffiForeignFutureResultU8
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I8
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I8
-typedef struct UniffiForeignFutureStructI8 {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I8
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I8
+typedef struct UniffiForeignFutureResultI8 {
     int8_t returnValue;
     RustCallStatus callStatus;
-} UniffiForeignFutureStructI8;
+} UniffiForeignFutureResultI8;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I8
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I8
-typedef void (*UniffiForeignFutureCompleteI8)(uint64_t, UniffiForeignFutureStructI8
+typedef void (*UniffiForeignFutureCompleteI8)(uint64_t, UniffiForeignFutureResultI8
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U16
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U16
-typedef struct UniffiForeignFutureStructU16 {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U16
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U16
+typedef struct UniffiForeignFutureResultU16 {
     uint16_t returnValue;
     RustCallStatus callStatus;
-} UniffiForeignFutureStructU16;
+} UniffiForeignFutureResultU16;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U16
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U16
-typedef void (*UniffiForeignFutureCompleteU16)(uint64_t, UniffiForeignFutureStructU16
+typedef void (*UniffiForeignFutureCompleteU16)(uint64_t, UniffiForeignFutureResultU16
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I16
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I16
-typedef struct UniffiForeignFutureStructI16 {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I16
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I16
+typedef struct UniffiForeignFutureResultI16 {
     int16_t returnValue;
     RustCallStatus callStatus;
-} UniffiForeignFutureStructI16;
+} UniffiForeignFutureResultI16;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I16
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I16
-typedef void (*UniffiForeignFutureCompleteI16)(uint64_t, UniffiForeignFutureStructI16
+typedef void (*UniffiForeignFutureCompleteI16)(uint64_t, UniffiForeignFutureResultI16
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U32
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U32
-typedef struct UniffiForeignFutureStructU32 {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U32
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U32
+typedef struct UniffiForeignFutureResultU32 {
     uint32_t returnValue;
     RustCallStatus callStatus;
-} UniffiForeignFutureStructU32;
+} UniffiForeignFutureResultU32;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U32
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U32
-typedef void (*UniffiForeignFutureCompleteU32)(uint64_t, UniffiForeignFutureStructU32
+typedef void (*UniffiForeignFutureCompleteU32)(uint64_t, UniffiForeignFutureResultU32
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I32
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I32
-typedef struct UniffiForeignFutureStructI32 {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I32
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I32
+typedef struct UniffiForeignFutureResultI32 {
     int32_t returnValue;
     RustCallStatus callStatus;
-} UniffiForeignFutureStructI32;
+} UniffiForeignFutureResultI32;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I32
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I32
-typedef void (*UniffiForeignFutureCompleteI32)(uint64_t, UniffiForeignFutureStructI32
+typedef void (*UniffiForeignFutureCompleteI32)(uint64_t, UniffiForeignFutureResultI32
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U64
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U64
-typedef struct UniffiForeignFutureStructU64 {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U64
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U64
+typedef struct UniffiForeignFutureResultU64 {
     uint64_t returnValue;
     RustCallStatus callStatus;
-} UniffiForeignFutureStructU64;
+} UniffiForeignFutureResultU64;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U64
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U64
-typedef void (*UniffiForeignFutureCompleteU64)(uint64_t, UniffiForeignFutureStructU64
+typedef void (*UniffiForeignFutureCompleteU64)(uint64_t, UniffiForeignFutureResultU64
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I64
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I64
-typedef struct UniffiForeignFutureStructI64 {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I64
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I64
+typedef struct UniffiForeignFutureResultI64 {
     int64_t returnValue;
     RustCallStatus callStatus;
-} UniffiForeignFutureStructI64;
+} UniffiForeignFutureResultI64;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I64
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I64
-typedef void (*UniffiForeignFutureCompleteI64)(uint64_t, UniffiForeignFutureStructI64
+typedef void (*UniffiForeignFutureCompleteI64)(uint64_t, UniffiForeignFutureResultI64
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_F32
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_F32
-typedef struct UniffiForeignFutureStructF32 {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_F32
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_F32
+typedef struct UniffiForeignFutureResultF32 {
     float returnValue;
     RustCallStatus callStatus;
-} UniffiForeignFutureStructF32;
+} UniffiForeignFutureResultF32;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F32
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F32
-typedef void (*UniffiForeignFutureCompleteF32)(uint64_t, UniffiForeignFutureStructF32
+typedef void (*UniffiForeignFutureCompleteF32)(uint64_t, UniffiForeignFutureResultF32
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_F64
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_F64
-typedef struct UniffiForeignFutureStructF64 {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_F64
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_F64
+typedef struct UniffiForeignFutureResultF64 {
     double returnValue;
     RustCallStatus callStatus;
-} UniffiForeignFutureStructF64;
+} UniffiForeignFutureResultF64;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F64
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F64
-typedef void (*UniffiForeignFutureCompleteF64)(uint64_t, UniffiForeignFutureStructF64
+typedef void (*UniffiForeignFutureCompleteF64)(uint64_t, UniffiForeignFutureResultF64
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_POINTER
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_POINTER
-typedef struct UniffiForeignFutureStructPointer {
-    void*_Nonnull returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureStructPointer;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_POINTER
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_POINTER
-typedef void (*UniffiForeignFutureCompletePointer)(uint64_t, UniffiForeignFutureStructPointer
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_RUST_BUFFER
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_RUST_BUFFER
-typedef struct UniffiForeignFutureStructRustBuffer {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_RUST_BUFFER
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_RUST_BUFFER
+typedef struct UniffiForeignFutureResultRustBuffer {
     RustBuffer returnValue;
     RustCallStatus callStatus;
-} UniffiForeignFutureStructRustBuffer;
+} UniffiForeignFutureResultRustBuffer;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_RUST_BUFFER
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_RUST_BUFFER
-typedef void (*UniffiForeignFutureCompleteRustBuffer)(uint64_t, UniffiForeignFutureStructRustBuffer
+typedef void (*UniffiForeignFutureCompleteRustBuffer)(uint64_t, UniffiForeignFutureResultRustBuffer
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_VOID
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_VOID
-typedef struct UniffiForeignFutureStructVoid {
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_VOID
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_VOID
+typedef struct UniffiForeignFutureResultVoid {
     RustCallStatus callStatus;
-} UniffiForeignFutureStructVoid;
+} UniffiForeignFutureResultVoid;
 
 #endif
 #ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_VOID
 #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_VOID
-typedef void (*UniffiForeignFutureCompleteVoid)(uint64_t, UniffiForeignFutureStructVoid
+typedef void (*UniffiForeignFutureCompleteVoid)(uint64_t, UniffiForeignFutureResultVoid
     );
 
 #endif
@@ -261,6 +253,13 @@ typedef void (*UniffiCallbackInterfaceYrsArrayEachDelegateMethod0)(uint64_t, Rus
 #ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_YRS_ARRAY_OBSERVATION_DELEGATE_METHOD0
 #define UNIFFI_FFIDEF_CALLBACK_INTERFACE_YRS_ARRAY_OBSERVATION_DELEGATE_METHOD0
 typedef void (*UniffiCallbackInterfaceYrsArrayObservationDelegateMethod0)(uint64_t, RustBuffer, void* _Nonnull, 
+        RustCallStatus *_Nonnull uniffiCallStatus
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_YRS_DOC_UPDATE_DELEGATE_METHOD0
+#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_YRS_DOC_UPDATE_DELEGATE_METHOD0
+typedef void (*UniffiCallbackInterfaceYrsDocUpdateDelegateMethod0)(uint64_t, RustBuffer, RustBuffer, void* _Nonnull, 
         RustCallStatus *_Nonnull uniffiCallStatus
     );
 
@@ -295,7 +294,7 @@ typedef void (*UniffiCallbackInterfaceYrsTextObservationDelegateMethod0)(uint64_
 #endif
 #ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_YRS_UNDO_MANAGER_OBSERVATION_DELEGATE_METHOD0
 #define UNIFFI_FFIDEF_CALLBACK_INTERFACE_YRS_UNDO_MANAGER_OBSERVATION_DELEGATE_METHOD0
-typedef void (*UniffiCallbackInterfaceYrsUndoManagerObservationDelegateMethod0)(uint64_t, void*_Nonnull, uint64_t, uint64_t* _Nonnull, 
+typedef void (*UniffiCallbackInterfaceYrsUndoManagerObservationDelegateMethod0)(uint64_t, uint64_t, uint64_t, uint64_t* _Nonnull, 
         RustCallStatus *_Nonnull uniffiCallStatus
     );
 
@@ -303,493 +302,519 @@ typedef void (*UniffiCallbackInterfaceYrsUndoManagerObservationDelegateMethod0)(
 #ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_ARRAY_EACH_DELEGATE
 #define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_ARRAY_EACH_DELEGATE
 typedef struct UniffiVTableCallbackInterfaceYrsArrayEachDelegate {
-    UniffiCallbackInterfaceYrsArrayEachDelegateMethod0 _Nonnull call;
     UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceYrsArrayEachDelegateMethod0 _Nonnull call;
 } UniffiVTableCallbackInterfaceYrsArrayEachDelegate;
 
 #endif
 #ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_ARRAY_OBSERVATION_DELEGATE
 #define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_ARRAY_OBSERVATION_DELEGATE
 typedef struct UniffiVTableCallbackInterfaceYrsArrayObservationDelegate {
-    UniffiCallbackInterfaceYrsArrayObservationDelegateMethod0 _Nonnull call;
     UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceYrsArrayObservationDelegateMethod0 _Nonnull call;
 } UniffiVTableCallbackInterfaceYrsArrayObservationDelegate;
+
+#endif
+#ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_DOC_UPDATE_DELEGATE
+#define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_DOC_UPDATE_DELEGATE
+typedef struct UniffiVTableCallbackInterfaceYrsDocUpdateDelegate {
+    UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceYrsDocUpdateDelegateMethod0 _Nonnull call;
+} UniffiVTableCallbackInterfaceYrsDocUpdateDelegate;
 
 #endif
 #ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_MAP_ITERATOR_DELEGATE
 #define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_MAP_ITERATOR_DELEGATE
 typedef struct UniffiVTableCallbackInterfaceYrsMapIteratorDelegate {
-    UniffiCallbackInterfaceYrsMapIteratorDelegateMethod0 _Nonnull call;
     UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceYrsMapIteratorDelegateMethod0 _Nonnull call;
 } UniffiVTableCallbackInterfaceYrsMapIteratorDelegate;
 
 #endif
 #ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_MAP_KV_ITERATOR_DELEGATE
 #define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_MAP_KV_ITERATOR_DELEGATE
 typedef struct UniffiVTableCallbackInterfaceYrsMapKvIteratorDelegate {
-    UniffiCallbackInterfaceYrsMapKvIteratorDelegateMethod0 _Nonnull call;
     UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceYrsMapKvIteratorDelegateMethod0 _Nonnull call;
 } UniffiVTableCallbackInterfaceYrsMapKvIteratorDelegate;
 
 #endif
 #ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_MAP_OBSERVATION_DELEGATE
 #define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_MAP_OBSERVATION_DELEGATE
 typedef struct UniffiVTableCallbackInterfaceYrsMapObservationDelegate {
-    UniffiCallbackInterfaceYrsMapObservationDelegateMethod0 _Nonnull call;
     UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceYrsMapObservationDelegateMethod0 _Nonnull call;
 } UniffiVTableCallbackInterfaceYrsMapObservationDelegate;
 
 #endif
 #ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_TEXT_OBSERVATION_DELEGATE
 #define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_TEXT_OBSERVATION_DELEGATE
 typedef struct UniffiVTableCallbackInterfaceYrsTextObservationDelegate {
-    UniffiCallbackInterfaceYrsTextObservationDelegateMethod0 _Nonnull call;
     UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceYrsTextObservationDelegateMethod0 _Nonnull call;
 } UniffiVTableCallbackInterfaceYrsTextObservationDelegate;
 
 #endif
 #ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_UNDO_MANAGER_OBSERVATION_DELEGATE
 #define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_YRS_UNDO_MANAGER_OBSERVATION_DELEGATE
 typedef struct UniffiVTableCallbackInterfaceYrsUndoManagerObservationDelegate {
-    UniffiCallbackInterfaceYrsUndoManagerObservationDelegateMethod0 _Nonnull call;
     UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceYrsUndoManagerObservationDelegateMethod0 _Nonnull call;
 } UniffiVTableCallbackInterfaceYrsUndoManagerObservationDelegate;
 
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YSUBSCRIPTION
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YSUBSCRIPTION
-void*_Nonnull uniffi_uniffi_yniffi_fn_clone_ysubscription(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_clone_ysubscription(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YSUBSCRIPTION
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YSUBSCRIPTION
-void uniffi_uniffi_yniffi_fn_free_ysubscription(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_free_ysubscription(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSARRAY
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSARRAY
-void*_Nonnull uniffi_uniffi_yniffi_fn_clone_yrsarray(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_clone_yrsarray(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSARRAY
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSARRAY
-void uniffi_uniffi_yniffi_fn_free_yrsarray(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_free_yrsarray(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_EACH
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_EACH
-void uniffi_uniffi_yniffi_fn_method_yrsarray_each(void*_Nonnull ptr, void*_Nonnull tx, uint64_t delegate, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsarray_each(uint64_t ptr, uint64_t tx, uint64_t delegate, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_GET
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_GET
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrsarray_get(void*_Nonnull ptr, void*_Nonnull tx, uint32_t index, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrsarray_get(uint64_t ptr, uint64_t tx, uint32_t index, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_INSERT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_INSERT
-void uniffi_uniffi_yniffi_fn_method_yrsarray_insert(void*_Nonnull ptr, void*_Nonnull tx, uint32_t index, RustBuffer value, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsarray_insert(uint64_t ptr, uint64_t tx, uint32_t index, RustBuffer value, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_INSERT_RANGE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_INSERT_RANGE
-void uniffi_uniffi_yniffi_fn_method_yrsarray_insert_range(void*_Nonnull ptr, void*_Nonnull tx, uint32_t index, RustBuffer values, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsarray_insert_range(uint64_t ptr, uint64_t tx, uint32_t index, RustBuffer values, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_LENGTH
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_LENGTH
-uint32_t uniffi_uniffi_yniffi_fn_method_yrsarray_length(void*_Nonnull ptr, void*_Nonnull tx, RustCallStatus *_Nonnull out_status
+uint32_t uniffi_uniffi_yniffi_fn_method_yrsarray_length(uint64_t ptr, uint64_t tx, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_OBSERVE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_OBSERVE
-void*_Nonnull uniffi_uniffi_yniffi_fn_method_yrsarray_observe(void*_Nonnull ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsarray_observe(uint64_t ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_PUSH_BACK
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_PUSH_BACK
-void uniffi_uniffi_yniffi_fn_method_yrsarray_push_back(void*_Nonnull ptr, void*_Nonnull tx, RustBuffer value, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsarray_push_back(uint64_t ptr, uint64_t tx, RustBuffer value, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_PUSH_FRONT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_PUSH_FRONT
-void uniffi_uniffi_yniffi_fn_method_yrsarray_push_front(void*_Nonnull ptr, void*_Nonnull tx, RustBuffer value, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsarray_push_front(uint64_t ptr, uint64_t tx, RustBuffer value, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_RAW_PTR
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_RAW_PTR
-uint64_t uniffi_uniffi_yniffi_fn_method_yrsarray_raw_ptr(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsarray_raw_ptr(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_REMOVE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_REMOVE
-void uniffi_uniffi_yniffi_fn_method_yrsarray_remove(void*_Nonnull ptr, void*_Nonnull tx, uint32_t index, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsarray_remove(uint64_t ptr, uint64_t tx, uint32_t index, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_REMOVE_RANGE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_REMOVE_RANGE
-void uniffi_uniffi_yniffi_fn_method_yrsarray_remove_range(void*_Nonnull ptr, void*_Nonnull tx, uint32_t index, uint32_t len, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsarray_remove_range(uint64_t ptr, uint64_t tx, uint32_t index, uint32_t len, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_TO_A
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSARRAY_TO_A
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrsarray_to_a(void*_Nonnull ptr, void*_Nonnull tx, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrsarray_to_a(uint64_t ptr, uint64_t tx, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSDOC
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSDOC
-void*_Nonnull uniffi_uniffi_yniffi_fn_clone_yrsdoc(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_clone_yrsdoc(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSDOC
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSDOC
-void uniffi_uniffi_yniffi_fn_free_yrsdoc(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_free_yrsdoc(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CONSTRUCTOR_YRSDOC_NEW
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CONSTRUCTOR_YRSDOC_NEW
-void*_Nonnull uniffi_uniffi_yniffi_fn_constructor_yrsdoc_new(RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_constructor_yrsdoc_new(RustCallStatus *_Nonnull out_status
     
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_ENCODE_DIFF_V1
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_ENCODE_DIFF_V1
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrsdoc_encode_diff_v1(void*_Nonnull ptr, void*_Nonnull tx, RustBuffer state_vector, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrsdoc_encode_diff_v1(uint64_t ptr, uint64_t tx, RustBuffer state_vector, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_GET_ARRAY
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_GET_ARRAY
-void*_Nonnull uniffi_uniffi_yniffi_fn_method_yrsdoc_get_array(void*_Nonnull ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsdoc_get_array(uint64_t ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_GET_MAP
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_GET_MAP
-void*_Nonnull uniffi_uniffi_yniffi_fn_method_yrsdoc_get_map(void*_Nonnull ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsdoc_get_map(uint64_t ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_GET_TEXT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_GET_TEXT
-void*_Nonnull uniffi_uniffi_yniffi_fn_method_yrsdoc_get_text(void*_Nonnull ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsdoc_get_text(uint64_t ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_OBSERVE_UPDATE_V1
+#define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_OBSERVE_UPDATE_V1
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsdoc_observe_update_v1(uint64_t ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_TRANSACT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_TRANSACT
-void*_Nonnull uniffi_uniffi_yniffi_fn_method_yrsdoc_transact(void*_Nonnull ptr, RustBuffer origin, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsdoc_transact(uint64_t ptr, RustBuffer origin, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_UNDO_MANAGER
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSDOC_UNDO_MANAGER
-void*_Nonnull uniffi_uniffi_yniffi_fn_method_yrsdoc_undo_manager(void*_Nonnull ptr, RustBuffer tracked_refs, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsdoc_undo_manager(uint64_t ptr, RustBuffer tracked_refs, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSMAP
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSMAP
-void*_Nonnull uniffi_uniffi_yniffi_fn_clone_yrsmap(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_clone_yrsmap(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSMAP
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSMAP
-void uniffi_uniffi_yniffi_fn_free_yrsmap(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_free_yrsmap(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_CLEAR
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_CLEAR
-void uniffi_uniffi_yniffi_fn_method_yrsmap_clear(void*_Nonnull ptr, void*_Nonnull tx, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsmap_clear(uint64_t ptr, uint64_t tx, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_CONTAINS_KEY
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_CONTAINS_KEY
-int8_t uniffi_uniffi_yniffi_fn_method_yrsmap_contains_key(void*_Nonnull ptr, void*_Nonnull tx, RustBuffer key, RustCallStatus *_Nonnull out_status
+int8_t uniffi_uniffi_yniffi_fn_method_yrsmap_contains_key(uint64_t ptr, uint64_t tx, RustBuffer key, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_EACH
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_EACH
-void uniffi_uniffi_yniffi_fn_method_yrsmap_each(void*_Nonnull ptr, void*_Nonnull tx, uint64_t delegate, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsmap_each(uint64_t ptr, uint64_t tx, uint64_t delegate, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_GET
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_GET
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrsmap_get(void*_Nonnull ptr, void*_Nonnull tx, RustBuffer key, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrsmap_get(uint64_t ptr, uint64_t tx, RustBuffer key, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_INSERT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_INSERT
-void uniffi_uniffi_yniffi_fn_method_yrsmap_insert(void*_Nonnull ptr, void*_Nonnull tx, RustBuffer key, RustBuffer value, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsmap_insert(uint64_t ptr, uint64_t tx, RustBuffer key, RustBuffer value, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_KEYS
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_KEYS
-void uniffi_uniffi_yniffi_fn_method_yrsmap_keys(void*_Nonnull ptr, void*_Nonnull tx, uint64_t delegate, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsmap_keys(uint64_t ptr, uint64_t tx, uint64_t delegate, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_LENGTH
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_LENGTH
-uint32_t uniffi_uniffi_yniffi_fn_method_yrsmap_length(void*_Nonnull ptr, void*_Nonnull tx, RustCallStatus *_Nonnull out_status
+uint32_t uniffi_uniffi_yniffi_fn_method_yrsmap_length(uint64_t ptr, uint64_t tx, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_OBSERVE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_OBSERVE
-void*_Nonnull uniffi_uniffi_yniffi_fn_method_yrsmap_observe(void*_Nonnull ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsmap_observe(uint64_t ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_RAW_PTR
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_RAW_PTR
-uint64_t uniffi_uniffi_yniffi_fn_method_yrsmap_raw_ptr(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsmap_raw_ptr(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_REMOVE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_REMOVE
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrsmap_remove(void*_Nonnull ptr, void*_Nonnull tx, RustBuffer key, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrsmap_remove(uint64_t ptr, uint64_t tx, RustBuffer key, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_VALUES
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSMAP_VALUES
-void uniffi_uniffi_yniffi_fn_method_yrsmap_values(void*_Nonnull ptr, void*_Nonnull tx, uint64_t delegate, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsmap_values(uint64_t ptr, uint64_t tx, uint64_t delegate, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSTEXT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSTEXT
-void*_Nonnull uniffi_uniffi_yniffi_fn_clone_yrstext(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_clone_yrstext(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSTEXT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSTEXT
-void uniffi_uniffi_yniffi_fn_free_yrstext(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_free_yrstext(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_APPEND
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_APPEND
-void uniffi_uniffi_yniffi_fn_method_yrstext_append(void*_Nonnull ptr, void*_Nonnull tx, RustBuffer text, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrstext_append(uint64_t ptr, uint64_t tx, RustBuffer text, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_FORMAT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_FORMAT
-void uniffi_uniffi_yniffi_fn_method_yrstext_format(void*_Nonnull ptr, void*_Nonnull tx, uint32_t index, uint32_t length, RustBuffer attrs, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrstext_format(uint64_t ptr, uint64_t tx, uint32_t index, uint32_t length, RustBuffer attrs, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_GET_STRING
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_GET_STRING
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrstext_get_string(void*_Nonnull ptr, void*_Nonnull tx, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrstext_get_string(uint64_t ptr, uint64_t tx, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_INSERT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_INSERT
-void uniffi_uniffi_yniffi_fn_method_yrstext_insert(void*_Nonnull ptr, void*_Nonnull tx, uint32_t index, RustBuffer chunk, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrstext_insert(uint64_t ptr, uint64_t tx, uint32_t index, RustBuffer chunk, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_INSERT_EMBED
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_INSERT_EMBED
-void uniffi_uniffi_yniffi_fn_method_yrstext_insert_embed(void*_Nonnull ptr, void*_Nonnull tx, uint32_t index, RustBuffer content, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrstext_insert_embed(uint64_t ptr, uint64_t tx, uint32_t index, RustBuffer content, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_INSERT_EMBED_WITH_ATTRIBUTES
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_INSERT_EMBED_WITH_ATTRIBUTES
-void uniffi_uniffi_yniffi_fn_method_yrstext_insert_embed_with_attributes(void*_Nonnull ptr, void*_Nonnull tx, uint32_t index, RustBuffer content, RustBuffer attrs, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrstext_insert_embed_with_attributes(uint64_t ptr, uint64_t tx, uint32_t index, RustBuffer content, RustBuffer attrs, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_INSERT_WITH_ATTRIBUTES
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_INSERT_WITH_ATTRIBUTES
-void uniffi_uniffi_yniffi_fn_method_yrstext_insert_with_attributes(void*_Nonnull ptr, void*_Nonnull tx, uint32_t index, RustBuffer chunk, RustBuffer attrs, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrstext_insert_with_attributes(uint64_t ptr, uint64_t tx, uint32_t index, RustBuffer chunk, RustBuffer attrs, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_LENGTH
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_LENGTH
-uint32_t uniffi_uniffi_yniffi_fn_method_yrstext_length(void*_Nonnull ptr, void*_Nonnull tx, RustCallStatus *_Nonnull out_status
+uint32_t uniffi_uniffi_yniffi_fn_method_yrstext_length(uint64_t ptr, uint64_t tx, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_OBSERVE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_OBSERVE
-void*_Nonnull uniffi_uniffi_yniffi_fn_method_yrstext_observe(void*_Nonnull ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrstext_observe(uint64_t ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_RAW_PTR
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_RAW_PTR
-uint64_t uniffi_uniffi_yniffi_fn_method_yrstext_raw_ptr(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrstext_raw_ptr(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_REMOVE_RANGE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTEXT_REMOVE_RANGE
-void uniffi_uniffi_yniffi_fn_method_yrstext_remove_range(void*_Nonnull ptr, void*_Nonnull tx, uint32_t start, uint32_t length, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrstext_remove_range(uint64_t ptr, uint64_t tx, uint32_t start, uint32_t length, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSTRANSACTION
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSTRANSACTION
-void*_Nonnull uniffi_uniffi_yniffi_fn_clone_yrstransaction(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_clone_yrstransaction(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSTRANSACTION
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSTRANSACTION
-void uniffi_uniffi_yniffi_fn_free_yrstransaction(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_free_yrstransaction(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_FREE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_FREE
-void uniffi_uniffi_yniffi_fn_method_yrstransaction_free(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrstransaction_free(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_ORIGIN
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_ORIGIN
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_origin(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_origin(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_APPLY_UPDATE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_APPLY_UPDATE
-void uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_apply_update(void*_Nonnull ptr, RustBuffer update, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_apply_update(uint64_t ptr, RustBuffer update, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_ENCODE_STATE_AS_UPDATE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_ENCODE_STATE_AS_UPDATE
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_encode_state_as_update(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_encode_state_as_update(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_ENCODE_STATE_AS_UPDATE_FROM_SV
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_ENCODE_STATE_AS_UPDATE_FROM_SV
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_encode_state_as_update_from_sv(void*_Nonnull ptr, RustBuffer state_vector, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_encode_state_as_update_from_sv(uint64_t ptr, RustBuffer state_vector, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_ENCODE_UPDATE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_ENCODE_UPDATE
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_encode_update(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_encode_update(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_GET_ARRAY
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_GET_ARRAY
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_get_array(void*_Nonnull ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_get_array(uint64_t ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_GET_MAP
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_GET_MAP
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_get_map(void*_Nonnull ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_get_map(uint64_t ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_GET_TEXT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_GET_TEXT
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_get_text(void*_Nonnull ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_get_text(uint64_t ptr, RustBuffer name, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_STATE_VECTOR
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSTRANSACTION_TRANSACTION_STATE_VECTOR
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_state_vector(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrstransaction_transaction_state_vector(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSUNDOEVENT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSUNDOEVENT
-void*_Nonnull uniffi_uniffi_yniffi_fn_clone_yrsundoevent(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_clone_yrsundoevent(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSUNDOEVENT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSUNDOEVENT
-void uniffi_uniffi_yniffi_fn_free_yrsundoevent(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_free_yrsundoevent(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOEVENT_HAS_CHANGED
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOEVENT_HAS_CHANGED
-int8_t uniffi_uniffi_yniffi_fn_method_yrsundoevent_has_changed(void*_Nonnull ptr, uint64_t shared_ref, RustCallStatus *_Nonnull out_status
+int8_t uniffi_uniffi_yniffi_fn_method_yrsundoevent_has_changed(uint64_t ptr, uint64_t shared_ref, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOEVENT_KIND
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOEVENT_KIND
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrsundoevent_kind(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrsundoevent_kind(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOEVENT_ORIGIN
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOEVENT_ORIGIN
-RustBuffer uniffi_uniffi_yniffi_fn_method_yrsundoevent_origin(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_uniffi_yniffi_fn_method_yrsundoevent_origin(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSUNDOMANAGER
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_CLONE_YRSUNDOMANAGER
-void*_Nonnull uniffi_uniffi_yniffi_fn_clone_yrsundomanager(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_clone_yrsundomanager(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSUNDOMANAGER
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_FREE_YRSUNDOMANAGER
-void uniffi_uniffi_yniffi_fn_free_yrsundomanager(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_free_yrsundomanager(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_ADD_ORIGIN
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_ADD_ORIGIN
-void uniffi_uniffi_yniffi_fn_method_yrsundomanager_add_origin(void*_Nonnull ptr, RustBuffer origin, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsundomanager_add_origin(uint64_t ptr, RustBuffer origin, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_ADD_SCOPE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_ADD_SCOPE
-void uniffi_uniffi_yniffi_fn_method_yrsundomanager_add_scope(void*_Nonnull ptr, uint64_t tracked_ref, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsundomanager_add_scope(uint64_t ptr, uint64_t tracked_ref, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_CLEAR
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_CLEAR
-void uniffi_uniffi_yniffi_fn_method_yrsundomanager_clear(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsundomanager_clear(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_OBSERVE_ADDED
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_OBSERVE_ADDED
-void*_Nonnull uniffi_uniffi_yniffi_fn_method_yrsundomanager_observe_added(void*_Nonnull ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsundomanager_observe_added(uint64_t ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_OBSERVE_POPPED
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_OBSERVE_POPPED
-void*_Nonnull uniffi_uniffi_yniffi_fn_method_yrsundomanager_observe_popped(void*_Nonnull ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsundomanager_observe_popped(uint64_t ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_OBSERVE_UPDATED
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_OBSERVE_UPDATED
-void*_Nonnull uniffi_uniffi_yniffi_fn_method_yrsundomanager_observe_updated(void*_Nonnull ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
+uint64_t uniffi_uniffi_yniffi_fn_method_yrsundomanager_observe_updated(uint64_t ptr, uint64_t delegate, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_REDO
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_REDO
-int8_t uniffi_uniffi_yniffi_fn_method_yrsundomanager_redo(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+int8_t uniffi_uniffi_yniffi_fn_method_yrsundomanager_redo(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_REMOVE_ORIGIN
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_REMOVE_ORIGIN
-void uniffi_uniffi_yniffi_fn_method_yrsundomanager_remove_origin(void*_Nonnull ptr, RustBuffer origin, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsundomanager_remove_origin(uint64_t ptr, RustBuffer origin, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_UNDO
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_UNDO
-int8_t uniffi_uniffi_yniffi_fn_method_yrsundomanager_undo(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+int8_t uniffi_uniffi_yniffi_fn_method_yrsundomanager_undo(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_WRAP_CHANGES
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_METHOD_YRSUNDOMANAGER_WRAP_CHANGES
-void uniffi_uniffi_yniffi_fn_method_yrsundomanager_wrap_changes(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_uniffi_yniffi_fn_method_yrsundomanager_wrap_changes(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSARRAYEACHDELEGATE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSARRAYEACHDELEGATE
-void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsarrayeachdelegate(UniffiVTableCallbackInterfaceYrsArrayEachDelegate* _Nonnull vtable
+void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsarrayeachdelegate(const UniffiVTableCallbackInterfaceYrsArrayEachDelegate* _Nonnull vtable
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSARRAYOBSERVATIONDELEGATE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSARRAYOBSERVATIONDELEGATE
-void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsarrayobservationdelegate(UniffiVTableCallbackInterfaceYrsArrayObservationDelegate* _Nonnull vtable
+void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsarrayobservationdelegate(const UniffiVTableCallbackInterfaceYrsArrayObservationDelegate* _Nonnull vtable
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSDOCUPDATEDELEGATE
+#define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSDOCUPDATEDELEGATE
+void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsdocupdatedelegate(const UniffiVTableCallbackInterfaceYrsDocUpdateDelegate* _Nonnull vtable
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSMAPITERATORDELEGATE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSMAPITERATORDELEGATE
-void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsmapiteratordelegate(UniffiVTableCallbackInterfaceYrsMapIteratorDelegate* _Nonnull vtable
+void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsmapiteratordelegate(const UniffiVTableCallbackInterfaceYrsMapIteratorDelegate* _Nonnull vtable
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSMAPKVITERATORDELEGATE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSMAPKVITERATORDELEGATE
-void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsmapkviteratordelegate(UniffiVTableCallbackInterfaceYrsMapKvIteratorDelegate* _Nonnull vtable
+void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsmapkviteratordelegate(const UniffiVTableCallbackInterfaceYrsMapKvIteratorDelegate* _Nonnull vtable
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSMAPOBSERVATIONDELEGATE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSMAPOBSERVATIONDELEGATE
-void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsmapobservationdelegate(UniffiVTableCallbackInterfaceYrsMapObservationDelegate* _Nonnull vtable
+void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsmapobservationdelegate(const UniffiVTableCallbackInterfaceYrsMapObservationDelegate* _Nonnull vtable
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSTEXTOBSERVATIONDELEGATE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSTEXTOBSERVATIONDELEGATE
-void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrstextobservationdelegate(UniffiVTableCallbackInterfaceYrsTextObservationDelegate* _Nonnull vtable
+void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrstextobservationdelegate(const UniffiVTableCallbackInterfaceYrsTextObservationDelegate* _Nonnull vtable
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSUNDOMANAGEROBSERVATIONDELEGATE
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_FN_INIT_CALLBACK_VTABLE_YRSUNDOMANAGEROBSERVATIONDELEGATE
-void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsundomanagerobservationdelegate(UniffiVTableCallbackInterfaceYrsUndoManagerObservationDelegate* _Nonnull vtable
+void uniffi_uniffi_yniffi_fn_init_callback_vtable_yrsundomanagerobservationdelegate(const UniffiVTableCallbackInterfaceYrsUndoManagerObservationDelegate* _Nonnull vtable
 );
 #endif
 #ifndef UNIFFI_FFIDEF_FFI_UNIFFI_YNIFFI_RUSTBUFFER_ALLOC
@@ -1012,26 +1037,6 @@ void ffi_uniffi_yniffi_rust_future_free_f64(uint64_t handle
 double ffi_uniffi_yniffi_rust_future_complete_f64(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
-#ifndef UNIFFI_FFIDEF_FFI_UNIFFI_YNIFFI_RUST_FUTURE_POLL_POINTER
-#define UNIFFI_FFIDEF_FFI_UNIFFI_YNIFFI_RUST_FUTURE_POLL_POINTER
-void ffi_uniffi_yniffi_rust_future_poll_pointer(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
-);
-#endif
-#ifndef UNIFFI_FFIDEF_FFI_UNIFFI_YNIFFI_RUST_FUTURE_CANCEL_POINTER
-#define UNIFFI_FFIDEF_FFI_UNIFFI_YNIFFI_RUST_FUTURE_CANCEL_POINTER
-void ffi_uniffi_yniffi_rust_future_cancel_pointer(uint64_t handle
-);
-#endif
-#ifndef UNIFFI_FFIDEF_FFI_UNIFFI_YNIFFI_RUST_FUTURE_FREE_POINTER
-#define UNIFFI_FFIDEF_FFI_UNIFFI_YNIFFI_RUST_FUTURE_FREE_POINTER
-void ffi_uniffi_yniffi_rust_future_free_pointer(uint64_t handle
-);
-#endif
-#ifndef UNIFFI_FFIDEF_FFI_UNIFFI_YNIFFI_RUST_FUTURE_COMPLETE_POINTER
-#define UNIFFI_FFIDEF_FFI_UNIFFI_YNIFFI_RUST_FUTURE_COMPLETE_POINTER
-void*_Nonnull ffi_uniffi_yniffi_rust_future_complete_pointer(uint64_t handle, RustCallStatus *_Nonnull out_status
-);
-#endif
 #ifndef UNIFFI_FFIDEF_FFI_UNIFFI_YNIFFI_RUST_FUTURE_POLL_RUST_BUFFER
 #define UNIFFI_FFIDEF_FFI_UNIFFI_YNIFFI_RUST_FUTURE_POLL_RUST_BUFFER
 void ffi_uniffi_yniffi_rust_future_poll_rust_buffer(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
@@ -1165,6 +1170,12 @@ uint16_t uniffi_uniffi_yniffi_checksum_method_yrsdoc_get_map(void
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_CHECKSUM_METHOD_YRSDOC_GET_TEXT
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_CHECKSUM_METHOD_YRSDOC_GET_TEXT
 uint16_t uniffi_uniffi_yniffi_checksum_method_yrsdoc_get_text(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_CHECKSUM_METHOD_YRSDOC_OBSERVE_UPDATE_V1
+#define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_CHECKSUM_METHOD_YRSDOC_OBSERVE_UPDATE_V1
+uint16_t uniffi_uniffi_yniffi_checksum_method_yrsdoc_observe_update_v1(void
     
 );
 #endif
@@ -1465,6 +1476,12 @@ uint16_t uniffi_uniffi_yniffi_checksum_method_yrsarrayeachdelegate_call(void
 #ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_CHECKSUM_METHOD_YRSARRAYOBSERVATIONDELEGATE_CALL
 #define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_CHECKSUM_METHOD_YRSARRAYOBSERVATIONDELEGATE_CALL
 uint16_t uniffi_uniffi_yniffi_checksum_method_yrsarrayobservationdelegate_call(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_CHECKSUM_METHOD_YRSDOCUPDATEDELEGATE_CALL
+#define UNIFFI_FFIDEF_UNIFFI_UNIFFI_YNIFFI_CHECKSUM_METHOD_YRSDOCUPDATEDELEGATE_CALL
+uint16_t uniffi_uniffi_yniffi_checksum_method_yrsdocupdatedelegate_call(void
     
 );
 #endif

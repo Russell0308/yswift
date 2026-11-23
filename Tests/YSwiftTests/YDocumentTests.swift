@@ -26,7 +26,7 @@ class YDocumentTests: XCTestCase {
         let remoteText = remoteDocument.getOrCreateText(named: "example")
 
         let remoteState = remoteDocument.transactSync { txn in
-            txn.transactionStateVector()
+            try! txn.transactionStateVector()
         }
         let updateRemote = localDocument.transactSync { txn in
             localDocument.diff(txn: txn, from: remoteState)
@@ -60,7 +60,7 @@ class YDocumentTests: XCTestCase {
         }
 
         let remoteState = remoteDocument.transactSync { txn in
-            txn.transactionStateVector()
+            try! txn.transactionStateVector()
         }
         let updateRemote = localDocument.transactSync { txn in
             localDocument.diff(txn: txn, from: remoteState)
@@ -70,7 +70,7 @@ class YDocumentTests: XCTestCase {
         }
 
         let localState = localDocument.transactSync { txn in
-            txn.transactionStateVector()
+            try! txn.transactionStateVector()
         }
         let updateLocal = remoteDocument.transactSync { txn in
             localDocument.diff(txn: txn, from: localState)
@@ -88,5 +88,26 @@ class YDocumentTests: XCTestCase {
         }
 
         XCTAssertEqual(localString, remoteString)
+    }
+}
+
+final class YDocumentUpdateObserverTests: XCTestCase {
+    func test_observeUpdates_deliversLocalUpdatesUntilCancelled() throws {
+        let document = YDocument()
+        let text = document.getOrCreateText(named: "body")
+        var updates: [([UInt8], Origin?)] = []
+        let subscription = try document.observeUpdates { updates.append(($0, $1)) }
+
+        text.append("hello")
+        XCTAssertEqual(updates.count, 1)
+
+        let replica = YDocument()
+        let replicaText = replica.getOrCreateText(named: "body")
+        replica.transactSync { txn in try! txn.transactionApplyUpdate(update: updates[0].0) }
+        XCTAssertEqual(replicaText.getString(), "hello")
+
+        subscription.cancel()
+        text.append(" world")
+        XCTAssertEqual(updates.count, 1)
     }
 }

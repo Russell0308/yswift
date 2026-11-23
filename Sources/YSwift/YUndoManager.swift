@@ -16,19 +16,19 @@ public final class YUndoManager<T: AnyObject> {
     /// Adds an origin that the Undo manager tracks.
     /// - Parameter origin: The origin to track.
     public func addOrigin(_ origin: Origin) {
-        _manager.addOrigin(origin: origin.origin)
+        try! _manager.addOrigin(origin: origin.origin)
     }
 
     /// Removes an origin that the Undo manager tracks.
     /// - Parameter origin: The origin to remove from tracking.
     public func removeOrigin(_ origin: Origin) {
-        _manager.removeOrigin(origin: origin.origin)
+        try! _manager.removeOrigin(origin: origin.origin)
     }
 
     /// Adds another collection to track with the Undo manager
     /// - Parameter collection: The collection to track.
     public func track(_ collection: YCollection) {
-        _manager.addScope(trackedRef: collection.pointer())
+        try! _manager.addScope(trackedRef: collection.pointer())
     }
 
     /// Undo a change on a collection you're tracking back to the last point you set
@@ -51,7 +51,7 @@ public final class YUndoManager<T: AnyObject> {
     /// The Undo Manager tracks the points you set in a stack.
     /// Undo the to the most recent point set using ``undo()``.
     public func wrap() {
-        _manager.wrapChanges()
+        try! _manager.wrapChanges()
     }
 
     /// Clears the stack of undo/redo actions.
@@ -66,7 +66,7 @@ public final class YUndoManager<T: AnyObject> {
     /// Cancel the subscription by calling ``unobserveAdded(_:)`` with the subscription Id this method returns.
     public func observeAdded(_ body: @escaping (UndoEvent, T?) -> T?) -> YSubscription {
         let delegate = YUndoManagerObservationDelegate(callback: body)
-        return YSubscription(subscription: _manager.observeAdded(delegate: delegate))
+        return YSubscription(subscription: try! _manager.observeAdded(delegate: delegate))
     }
 
     /// Creates a subscription that is called when the undo manager updates a change.
@@ -76,7 +76,7 @@ public final class YUndoManager<T: AnyObject> {
     /// Call ``unobserveUpdated(_:)`` with the subscription Id this method returns to cancel the subscription.
     public func observeUpdated(_ body: @escaping (UndoEvent, T?) -> T?) -> YSubscription {
         let delegate = YUndoManagerObservationDelegate(callback: body)
-        return YSubscription(subscription: _manager.observeUpdated(delegate: delegate))
+        return YSubscription(subscription: try! _manager.observeUpdated(delegate: delegate))
     }
 
     /// Creates a subscription that is called when the undo manager replays a change.
@@ -86,12 +86,12 @@ public final class YUndoManager<T: AnyObject> {
     /// Call ``unobserveUpdated(_:)`` with the subscription Id this method returns to cancel the subscription.
     public func observePopped(_ body: @escaping (UndoEvent, T?) -> T?) -> YSubscription {
         let delegate = YUndoManagerObservationDelegate(callback: body)
-        return YSubscription(subscription: _manager.observePopped(delegate: delegate))
+        return YSubscription(subscription: try! _manager.observePopped(delegate: delegate))
     }
 }
 
-class YUndoManagerObservationDelegate<T: AnyObject>: YrsUndoManagerObservationDelegate {
-    private var callback: (YrsUndoEvent, UInt64) -> UInt64
+final class YUndoManagerObservationDelegate<T: AnyObject>: YrsUndoManagerObservationDelegate, @unchecked Sendable {
+    private let callback: (YrsUndoEvent, UInt64) -> UInt64
 
     init(callback: @escaping (UndoEvent, T?) -> T?) {
         self.callback = { (event: YrsUndoEvent, ptr: UInt64) -> UInt64 in

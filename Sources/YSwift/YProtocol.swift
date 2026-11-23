@@ -58,7 +58,7 @@ public final class YProtocol {
 
     func sendStep1() -> YSyncMessage {
         let stateVector: Buffer = document.transactSync { txn in
-            txn.transactionStateVector()
+            try! txn.transactionStateVector()
         }
         return YSyncMessage(kind: .STEP_1, buffer: stateVector)
     }

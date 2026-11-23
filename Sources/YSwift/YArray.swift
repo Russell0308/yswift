@@ -48,7 +48,7 @@ public final class YArray<T: Codable>: Transactable, YCollection {
     ///   - transaction: An optional transaction to use when retrieving an object.
     public func insert(at index: Int, value: T, transaction: YrsTransaction? = nil) {
         withTransaction(transaction) { txn in
-            self._array.insert(tx: txn, index: UInt32(index), value: Coder.encoded(value))
+            try! self._array.insert(tx: txn, index: UInt32(index), value: Coder.encoded(value))
         }
     }
 
@@ -59,7 +59,7 @@ public final class YArray<T: Codable>: Transactable, YCollection {
     ///   - transaction: An optional transaction to use when retrieving an object.
     public func insertArray(at index: Int, values: [T], transaction: YrsTransaction? = nil) {
         withTransaction(transaction) { txn in
-            self._array.insertRange(tx: txn, index: UInt32(index), values: Coder.encodedArray(values))
+            try! self._array.insertRange(tx: txn, index: UInt32(index), values: Coder.encodedArray(values))
         }
     }
 
@@ -69,7 +69,7 @@ public final class YArray<T: Codable>: Transactable, YCollection {
     ///   - transaction: An optional transaction to use when retrieving an object.
     public func append(_ value: T, transaction: YrsTransaction? = nil) {
         withTransaction(transaction) { txn in
-            self._array.pushBack(tx: txn, value: Coder.encoded(value))
+            try! self._array.pushBack(tx: txn, value: Coder.encoded(value))
         }
     }
 
@@ -79,7 +79,7 @@ public final class YArray<T: Codable>: Transactable, YCollection {
     ///   - transaction: An optional transaction to use when retrieving an object.
     public func prepend(_ value: T, transaction: YrsTransaction? = nil) {
         withTransaction(transaction) { txn in
-            self._array.pushFront(tx: txn, value: Coder.encoded(value))
+            try! self._array.pushFront(tx: txn, value: Coder.encoded(value))
         }
     }
 
@@ -89,7 +89,7 @@ public final class YArray<T: Codable>: Transactable, YCollection {
     ///   - transaction: An optional transaction to use when retrieving an object.
     public func remove(at index: Int, transaction: YrsTransaction? = nil) {
         withTransaction(transaction) { txn in
-            self._array.remove(tx: txn, index: UInt32(index))
+            try! self._array.remove(tx: txn, index: UInt32(index))
         }
     }
 
@@ -100,7 +100,7 @@ public final class YArray<T: Codable>: Transactable, YCollection {
     ///   - transaction: An optional transaction to use when retrieving an object.
     public func removeRange(start: Int, length: Int, transaction: YrsTransaction? = nil) {
         withTransaction(transaction) { txn in
-            self._array.removeRange(tx: txn, index: UInt32(start), len: UInt32(length))
+            try! self._array.removeRange(tx: txn, index: UInt32(start), len: UInt32(length))
         }
     }
 
@@ -108,7 +108,7 @@ public final class YArray<T: Codable>: Transactable, YCollection {
     /// - Parameter transaction: An optional transaction to use when retrieving an object.
     public func length(transaction: YrsTransaction? = nil) -> UInt32 {
         withTransaction(transaction) { txn in
-            self._array.length(tx: txn)
+            try! self._array.length(tx: txn)
         }
     }
 
@@ -116,7 +116,7 @@ public final class YArray<T: Codable>: Transactable, YCollection {
     /// - Parameter transaction: An optional transaction to use when retrieving an object.
     public func toArray(transaction: YrsTransaction? = nil) -> [T] {
         withTransaction(transaction) { txn in
-            Coder.decodedArray(self._array.toA(tx: txn))
+            Coder.decodedArray(try! self._array.toA(tx: txn))
         }
     }
 
@@ -127,7 +127,7 @@ public final class YArray<T: Codable>: Transactable, YCollection {
     public func each(transaction: YrsTransaction? = nil, _ body: @escaping (T) -> Void) {
         let delegate = YArrayEachDelegate(callback: body, decoded: Coder.decoded)
         withTransaction(transaction) { txn in
-            self._array.each(tx: txn, delegate: delegate)
+            try! self._array.each(tx: txn, delegate: delegate)
         }
     }
 
@@ -146,7 +146,7 @@ public final class YArray<T: Codable>: Transactable, YCollection {
     /// - Returns: An observer identifier.
     public func observe(_ body: @escaping ([YArrayChange<T>]) -> Void) -> YSubscription {
         let delegate = YArrayObservationDelegate(callback: body, decoded: Coder.decodedArray)
-        return YSubscription(subscription: _array.observe(delegate: delegate))
+        return YSubscription(subscription: try! _array.observe(delegate: delegate))
     }
     
     public func pointer() -> YrsCollectionPtr {
@@ -216,9 +216,9 @@ extension YArray: MutableCollection, RandomAccessCollection {
     }
 }
 
-class YArrayEachDelegate<T: Codable>: YrsArrayEachDelegate {
-    private var callback: (T) -> Void
-    private var decoded: (String) -> T
+final class YArrayEachDelegate<T: Codable>: YrsArrayEachDelegate, @unchecked Sendable {
+    private let callback: (T) -> Void
+    private let decoded: (String) -> T
 
     init(
         callback: @escaping (T) -> Void,
@@ -233,9 +233,9 @@ class YArrayEachDelegate<T: Codable>: YrsArrayEachDelegate {
     }
 }
 
-class YArrayObservationDelegate<T: Codable>: YrsArrayObservationDelegate {
-    private var callback: ([YArrayChange<T>]) -> Void
-    private var decoded: ([String]) -> [T]
+final class YArrayObservationDelegate<T: Codable>: YrsArrayObservationDelegate, @unchecked Sendable {
+    private let callback: ([YArrayChange<T>]) -> Void
+    private let decoded: ([String]) -> [T]
 
     init(
         callback: @escaping ([YArrayChange<T>]) -> Void,

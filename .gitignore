@@ -12,7 +12,6 @@ build/
 *_symbols.txt
 .vscode
 
-Cargo.lock
 
 # Xcode
 #
@@ -104,3 +103,8 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+
+# build-xcframework.sh artifacts
+lib/target-remote/
+lib/yniffiFFI.xcframework/
+lib/yniffiFFI.xcframework.zip
