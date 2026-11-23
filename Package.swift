@@ -27,39 +27,21 @@ var globalSwiftSettings: [PackageDescription.SwiftSetting] = []
     }
 #endif
 
-let FFIbinaryTarget: PackageDescription.Target
-// The Rust core (yrs 0.28 via uniffi 0.32) ships as `yniffiFFI.xcframework`,
-// built by `scripts/build-xcframework.sh` (cross-compiled on a Linux host,
-// assembled on the Mac). If that build output is present next to this manifest
-// (a local checkout, or a consumer using `.package(path:)`), use it. Otherwise
-// fall back to a release asset.
-//
-// The release URL below is a placeholder: no release of this fork exists yet.
-// The checksum is the one `build-xcframework.sh` prints for the matching zip.
-let packageDir = URL(fileURLWithPath: #filePath).deletingLastPathComponent().path
-let localXCFramework = "lib/yniffiFFI.xcframework"
-if ProcessInfo.processInfo.environment["YSWIFT_LOCAL"] != nil
-    || FileManager.default.fileExists(atPath: "\(packageDir)/\(localXCFramework)") {
-    FFIbinaryTarget = .binaryTarget(
-            name: "yniffiFFI",
-            path: localXCFramework
-    )
-} else {
-    FFIbinaryTarget = .binaryTarget(
-            name: "yniffiFFI",
-            url: "https://github.com/Russell0308/yswift/releases/download/0.3.0/yniffiFFI.xcframework.zip",
-            checksum: "e020ff389f37698fefb5e8c960556810df5e2b8cd8a1e19c78e888f281b3fde5"
-    )
-}
+// The Rust core (yrs 0.28 via uniffi 0.32) is a local, git-ignored
+// `lib/yniffiFFI.xcframework`. Build it first with
+// `scripts/build-xcframework.sh` (static libs cross-compiled on a Linux host,
+// assembled on the Mac); without it SwiftPM fails to resolve the `yniffiFFI`
+// binary target. This fork publishes no release asset.
+let FFIbinaryTarget: PackageDescription.Target = .binaryTarget(
+    name: "yniffiFFI",
+    path: "lib/yniffiFFI.xcframework"
+)
 
 let package = Package(
     name: "YSwift",
-    platforms: [.iOS(.v13), .macOS(.v10_15)],
+    platforms: [.iOS(.v13)],
     products: [
         .library(name: "YSwift", targets: ["YSwift"]),
-    ],
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
     ],
     targets: [
         FFIbinaryTarget,
